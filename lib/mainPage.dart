@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_sharepref_localdb/mainPage2.dart';
-import 'package:hive/hive.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'models/todo.dart';
-
-//void mainApp() async{
-//  Hive.initFlutter();
-//  Hive.registerAdapter(TodoAdapter());
-//  await Hive.openBox<Todo>(HiveBoxex.todo);
-// } runApp(MainPage();
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tugas_sharepref_localdb/screens/todo_list_screen.dart';
+import 'main.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -17,13 +10,37 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  late SharedPreferences logindata;
+  late String username;
+
+  @override
+  void initState() {
+    super.initState();
+    initial();
+  }
+
+  void initial() async {
+    logindata = await SharedPreferences.getInstance();
+    setState(() {
+      username = logindata.getString('username')!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Shopper App"),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(onPressed: () {
+            logindata.setBool('login', true);
+            Navigator.pushReplacement(context,
+                new MaterialPageRoute(builder: (context) => MyLoginPage())); },
+              icon: Icon(Icons.exit_to_app))
+        ],
       ),
-      body: MainPage2(),
+      body: const TodoListScreen(title: '',),
     );
   }
 }
